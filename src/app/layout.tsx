@@ -3,17 +3,15 @@ import "./globals.css";
 import { ThemeProvider } from "../components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "Balamurali E | Deep Learning & Full-Stack AI Engineer Portfolio",
-  description: "Cinematic, immersive 3D portfolio of Balamurali E, Deep Learning Engineer, Technical Lead, and Full-Stack AI Developer specializing in Computer Vision, Edge AI, and YOLO deployments.",
+  title: "Balamurali E | Jr. Full-Stack AI Developer",
+  description: "Portfolio of Balamurali E, Jr. Full-Stack AI Developer specializing in Machine Learning, Deep Learning, and Computer Vision, with a working 3D scene built in React Three Fiber.",
   keywords: [
     "Balamurali E",
-    "Deep Learning Engineer",
-    "Computer Vision Engineer",
-    "Technical Lead",
-    "Full-Stack AI Developer",
+    "Jr. Full-Stack AI Developer",
+    "Computer Vision",
+    "Machine Learning",
+    "Deep Learning",
     "YOLOv11",
-    "NVIDIA Jetson Orin",
-    "Three.js Portfolio",
     "Next.js Portfolio",
     "React Three Fiber"
   ],
@@ -26,12 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full scrollbar-none antialiased">
+    <html lang="en" className="h-full antialiased dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className="min-h-full flex flex-col scrollbar-none select-none">
+      <body className="min-h-full">
         <ThemeProvider>
           {children}
         </ThemeProvider>
