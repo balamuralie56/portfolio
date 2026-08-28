@@ -85,7 +85,7 @@ export default function Hero() {
               className="self-center font-mono text-[10px] tracking-[0.12em] uppercase px-3 py-1.5 rounded pointer-events-none"
               style={{ background: 'color-mix(in srgb, var(--surface) 65%, transparent)', color: 'var(--ink-dim)' }}
             >
-              Look around · click an object to explore
+              Hover an object to explore
             </div>
           </div>
         </>

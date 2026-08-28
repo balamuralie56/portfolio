@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useGLTF } from '@react-three/drei';
+import { Mesh } from 'three';
 
 export function useReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -71,9 +73,25 @@ export function usePointer() {
   return pointer;
 }
 
-export type SectionId = 'about' | 'skills' | 'experience' | 'projects' | 'achievements' | 'contact';
-
-export function goToSection(id: SectionId, reduced: boolean) {
-  const el = document.getElementById(id);
-  el?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+// Loads a GLTF and returns a cloned scene graph. Cloning matters when the
+// same asset is placed more than once (books, plants) — Object3D instances
+// can only live in one place in the scene graph at a time; clone() gives
+// each placement its own node while still sharing the underlying geometry
+// and material (and therefore GPU buffers), so reuse stays cheap.
+//
+// castShadow/receiveShadow only take effect set directly on each Mesh —
+// setting them as a JSX prop on the group root does nothing, so this
+// traverses once per clone and sets both on every mesh found.
+export function useModel(path: string) {
+  const gltf = useGLTF(path);
+  return useMemo(() => {
+    const clone = gltf.scene.clone(true);
+    clone.traverse((child) => {
+      if (child instanceof Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return clone;
+  }, [gltf.scene]);
 }

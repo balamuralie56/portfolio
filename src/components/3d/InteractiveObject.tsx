@@ -1,29 +1,40 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { useFrame, type ThreeEvent } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import InfoPanel from './InfoPanel';
 
 interface Props {
   position?: [number, number, number];
   rotation?: [number, number, number];
-  onSelect: () => void;
-  label: string;
+  title: string;
+  lines: string[];
+  panelOffset?: [number, number, number];
+  accent?: string;
   reduced: boolean;
-  children: React.ReactNode;
+  children: React.ReactNode | ((hovered: boolean) => React.ReactNode);
 }
 
-// Wraps any furniture group with hover feedback (subtle scale-up + a small
-// mono label, in the site's Field Dossier style) and a click handler.
-// Reacts first; the actual section jump happens after, in the parent.
-export default function InteractiveObject({ position, rotation, onSelect, label, reduced, children }: Props) {
+// Hover-only. No onClick, no navigation, no URL change — the object reacts
+// in place (subtle scale-up) and an InfoPanel appears beside it with real
+// portfolio content. The visitor never leaves the room.
+export default function InteractiveObject({
+  position,
+  rotation,
+  title,
+  lines,
+  panelOffset,
+  accent,
+  reduced,
+  children,
+}: Props) {
   const [hovered, setHovered] = useState(false);
   const group = useRef<THREE.Group>(null);
 
   useFrame(() => {
     if (!group.current) return;
-    const target = hovered && !reduced ? 1.035 : 1;
+    const target = hovered && !reduced ? 1.03 : 1;
     if (reduced) {
       group.current.scale.setScalar(target);
     } else {
@@ -31,51 +42,23 @@ export default function InteractiveObject({ position, rotation, onSelect, label,
     }
   });
 
-  const handleOver = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    setHovered(true);
-    document.body.style.cursor = 'pointer';
-  };
-  const handleOut = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    setHovered(false);
-    document.body.style.cursor = 'auto';
-  };
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    onSelect();
-  };
-
   return (
     <group
       ref={group}
       position={position}
       rotation={rotation}
-      onPointerOver={handleOver}
-      onPointerOut={handleOut}
-      onClick={handleClick}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+        document.body.style.cursor = 'default';
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation();
+        setHovered(false);
+      }}
     >
-      {children}
-      {hovered && (
-        <Html center distanceFactor={9} position={[0, 0.85, 0]} style={{ pointerEvents: 'none' }}>
-          <div
-            style={{
-              fontFamily: "'Share Tech Mono', monospace",
-              fontSize: 10,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: '#F3F5F7',
-              background: 'rgba(10,11,14,0.82)',
-              border: '1px solid #FF7A1A',
-              padding: '4px 9px',
-              borderRadius: 2,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {label}
-          </div>
-        </Html>
-      )}
+      {typeof children === 'function' ? children(hovered) : children}
+      {hovered && <InfoPanel title={title} lines={lines} offset={panelOffset} accent={accent} />}
     </group>
   );
 }

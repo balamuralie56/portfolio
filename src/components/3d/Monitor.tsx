@@ -1,57 +1,47 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
 interface Props {
   arc: string;
+  hovered: boolean;
 }
 
-// Placeholder geometry — see ASSET_DOWNLOADS.md ("computerScreen" in the
-// Kenney pack). The glowing "code lines" on the screen are cheap emissive
-// strips rather than a texture, so there's nothing to load before this
-// renders.
-export default function Monitor({ arc }: Props) {
-  const [screenHovered, setScreenHovered] = useState(false);
-
+// No real free monitor model was found in Poly Haven's catalog (see
+// ASSET_DOWNLOADS.md), so this stays hand-built — but with real
+// roughness/metalness values instead of flat color, and a screen that
+// actually wakes up on hover rather than glowing at a constant level.
+// `hovered` is threaded down from the wrapping InteractiveObject so the
+// screen and its InfoPanel activate from the exact same hover state.
+export default function Monitor({ arc, hovered }: Props) {
   return (
     <group>
-      <mesh position={[0, 0.02, 0]} castShadow>
-        <cylinderGeometry args={[0.09, 0.11, 0.04, 16]} />
-        <meshStandardMaterial color="#1a1c20" roughness={0.5} metalness={0.3} />
+      <mesh position={[0, 0.02, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.1, 0.12, 0.03, 24]} />
+        <meshStandardMaterial color="#2a2c31" roughness={0.35} metalness={0.75} />
       </mesh>
-      <mesh position={[0, 0.13, 0]} castShadow>
-        <boxGeometry args={[0.03, 0.2, 0.03]} />
-        <meshStandardMaterial color="#1a1c20" roughness={0.5} metalness={0.3} />
+      <mesh position={[0, 0.15, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.035, 0.24, 0.035]} />
+        <meshStandardMaterial color="#2a2c31" roughness={0.35} metalness={0.75} />
       </mesh>
-      <mesh position={[0, 0.26, 0]} castShadow>
-        <boxGeometry args={[0.56, 0.34, 0.025]} />
-        <meshStandardMaterial color="#101216" roughness={0.4} metalness={0.4} />
+      {/* Bezel */}
+      <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.6, 0.38, 0.028]} />
+        <meshStandardMaterial color="#1c1d20" roughness={0.4} metalness={0.5} />
       </mesh>
-      <mesh
-        position={[0, 0.26, 0.014]}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setScreenHovered(true);
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          setScreenHovered(false);
-        }}
-      >
-        <planeGeometry args={[0.5, 0.28]} />
-        <meshStandardMaterial
-          color="#0a0b0e"
+      {/* Screen glass — subtle reflection via clearcoat-like roughness, wakes up on hover */}
+      <mesh position={[0, 0.3, 0.015]}>
+        <planeGeometry args={[0.55, 0.32]} />
+        <meshPhysicalMaterial
+          color="#05070a"
           emissive={arc}
-          emissiveIntensity={screenHovered ? 0.85 : 0.45}
+          emissiveIntensity={hovered ? 0.9 : 0.22}
+          roughness={0.15}
+          metalness={0.1}
+          clearcoat={0.6}
           toneMapped={false}
         />
       </mesh>
-      {[0.34, 0.3, 0.26, 0.22].map((y, i) => (
-        <mesh key={i} position={[-0.16 + (i % 2) * 0.06, y, 0.016]}>
-          <planeGeometry args={[0.15 + (i % 3) * 0.05, 0.012]} />
-          <meshStandardMaterial color={arc} emissive={arc} emissiveIntensity={1} toneMapped={false} transparent opacity={0.85} />
-        </mesh>
-      ))}
     </group>
   );
 }
