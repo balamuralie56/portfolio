@@ -1,11 +1,15 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ScrollControls, Scroll } from '@react-three/drei';
+import { ScrollControls, Scroll, KeyboardControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from '../ThemeProvider';
 import { useReducedMotion, useIsCoarsePointer, usePointer } from './hooks';
+import { ROVER_START } from './vehicle/obstacles';
+import VehicleRig from './vehicle/VehicleRig';
+import VehicleCamera from './vehicle/VehicleCamera';
+import DriveHint from './vehicle/DriveHint';
 import { skillGroups, experience, projects, serviceLog, achievements, researchInterests, journeyPhotos } from '../../utils/data';
 import WorkspaceLighting from './WorkspaceLighting';
 import WorkspaceLoader from './WorkspaceLoader';
@@ -180,6 +184,13 @@ interface WorkspaceSceneProps {
   coarse: boolean;
 }
 
+const KEY_MAP = [
+  { name: 'forward', keys: ['ArrowUp', 'KeyW'] },
+  { name: 'back', keys: ['ArrowDown', 'KeyS'] },
+  { name: 'left', keys: ['ArrowLeft', 'KeyA'] },
+  { name: 'right', keys: ['ArrowRight', 'KeyD'] },
+];
+
 export default function WorkspaceScene({ coarse }: WorkspaceSceneProps) {
   const { theme } = useTheme();
   const reduced = useReducedMotion();
@@ -187,10 +198,14 @@ export default function WorkspaceScene({ coarse }: WorkspaceSceneProps) {
   const isDark = theme === 'dark';
   const palette = isDark ? PALETTE.dark : PALETTE.light;
   const pointer = usePointer();
+  const drivingRef = useRef(false);
+  const roverPosRef = useRef(new THREE.Vector3(...ROVER_START));
+  const roverHeadingRef = useRef(0); // faces -Z: into the room, same direction the journey arrives facing
 
   return (
     <div className="absolute inset-0">
       <WorkspaceLoader />
+      <KeyboardControls map={KEY_MAP}>
       <Canvas
         shadows={!isCoarse}
         camera={{ position: [0, 2.2, 22], fov: 46 }}
@@ -202,16 +217,31 @@ export default function WorkspaceScene({ coarse }: WorkspaceSceneProps) {
         <fog attach="fog" args={[isDark ? '#0A0B0E' : '#F5F3EE', 7, 26]} />
         <WorkspaceLighting ember={palette.ember} arc={palette.arc} />
         <ScrollControls pages={5} damping={reduced ? 0 : 0.2}>
-          <JourneyCamera pointer={pointer} reduced={reduced} coarse={isCoarse} />
+          <JourneyCamera pointer={pointer} reduced={reduced} coarse={isCoarse} drivingRef={drivingRef} />
           <Suspense fallback={null}>
             <RoomContents palette={palette} reduced={reduced} />
             <ChapterMarkers ember={palette.ember} arc={palette.arc} reduced={reduced} />
+            {!isCoarse && (
+              <>
+                <VehicleRig
+                  ember={palette.ember}
+                  arc={palette.arc}
+                  reduced={reduced}
+                  drivingRef={drivingRef}
+                  roverPosRef={roverPosRef}
+                  roverHeadingRef={roverHeadingRef}
+                />
+                <VehicleCamera reduced={reduced} drivingRef={drivingRef} roverPosRef={roverPosRef} roverHeadingRef={roverHeadingRef} />
+                <DriveHint drivingRef={drivingRef} ember={palette.ember} />
+              </>
+            )}
           </Suspense>
           <Scroll html>
             <ChapterCaptions ember={palette.ember} />
           </Scroll>
         </ScrollControls>
       </Canvas>
+      </KeyboardControls>
       <div className="absolute bottom-5 right-5 pointer-events-none">
         <AmbientAudio />
       </div>

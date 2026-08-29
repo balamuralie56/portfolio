@@ -10,6 +10,7 @@ interface Props {
   pointer: React.MutableRefObject<{ x: number; y: number }>;
   reduced: boolean;
   coarse: boolean;
+  drivingRef?: React.MutableRefObject<boolean>;
 }
 
 function sampleWaypoints(offset: number) {
@@ -48,7 +49,12 @@ function sampleWaypoints(offset: number) {
 // had on top once arrived. Reduced motion snaps straight to the sampled
 // position each frame instead of damping toward it — still fully
 // scroll-responsive, just no camera-eases-behind-the-scroll lag.
-export default function JourneyCamera({ pointer, reduced, coarse }: Props) {
+//
+// On desktop, once arrived, driving the rover (VehicleRig) hands the
+// camera to VehicleCamera by setting `drivingRef.current = true` — this
+// component simply stops writing to camera.position/lookAt from that frame
+// on, so exactly one controller ever owns the camera.
+export default function JourneyCamera({ pointer, reduced, coarse, drivingRef }: Props) {
   const { camera } = useThree();
   const scroll = useScroll();
   const lookTarget = useRef(new THREE.Vector3(0, 2.0, 19));
@@ -56,6 +62,8 @@ export default function JourneyCamera({ pointer, reduced, coarse }: Props) {
   const desiredLook = useRef(new THREE.Vector3());
 
   useFrame(() => {
+    if (drivingRef?.current) return; // VehicleCamera has taken over
+
     const sample = sampleWaypoints(scroll.offset);
     const parallax = coarse || reduced ? 0 : 1;
     const px = pointer.current.x * 0.22 * parallax;
