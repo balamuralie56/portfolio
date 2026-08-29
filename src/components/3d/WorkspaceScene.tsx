@@ -2,12 +2,12 @@
 
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { ScrollControls, Scroll } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from '../ThemeProvider';
 import { useReducedMotion, useIsCoarsePointer, usePointer } from './hooks';
 import { skillGroups, experience, projects, serviceLog, achievements, researchInterests, journeyPhotos } from '../../utils/data';
 import WorkspaceLighting from './WorkspaceLighting';
-import WorkspaceCamera from './WorkspaceCamera';
 import WorkspaceLoader from './WorkspaceLoader';
 import Room from './Room';
 import Desk from './Desk';
@@ -24,6 +24,10 @@ import PhotoFrame from './PhotoFrame';
 import AchievementPlaque from './AchievementPlaque';
 import ResearchNotebook from './ResearchNotebook';
 import InteractiveObject from './InteractiveObject';
+import JourneyCamera from './journey/JourneyCamera';
+import ChapterMarkers from './journey/ChapterMarkers';
+import ChapterCaptions from './journey/ChapterCaptions';
+import AmbientAudio from './journey/AmbientAudio';
 
 const PALETTE = {
   dark: { ember: '#FF7A1A', arc: '#40C6F0', wall: '#3a342b' },
@@ -39,14 +43,9 @@ const timelineLines = serviceLog.map((s) => `${s.when}: ${s.title}`);
 const achievementLines = achievements.map((a) => `${a.metric} — ${a.title}`);
 const researchLines = researchInterests.map((r) => r.name);
 
-function RoomContents({ isDark, reduced, coarse }: { isDark: boolean; reduced: boolean; coarse: boolean }) {
-  const pointer = usePointer();
-  const palette = isDark ? PALETTE.dark : PALETTE.light;
-
+function RoomContents({ palette, reduced }: { palette: typeof PALETTE.dark; reduced: boolean }) {
   return (
     <>
-      <WorkspaceLighting ember={palette.ember} arc={palette.arc} />
-      <WorkspaceCamera pointer={pointer} reduced={reduced} coarse={coarse} />
       <Room wallColor={palette.wall} />
 
       {/* Desk cluster */}
@@ -186,23 +185,36 @@ export default function WorkspaceScene({ coarse }: WorkspaceSceneProps) {
   const reduced = useReducedMotion();
   const isCoarse = useIsCoarsePointer() || coarse;
   const isDark = theme === 'dark';
+  const palette = isDark ? PALETTE.dark : PALETTE.light;
+  const pointer = usePointer();
 
   return (
     <div className="absolute inset-0">
       <WorkspaceLoader />
       <Canvas
         shadows={!isCoarse}
-        camera={{ position: [0, 1.6, 4.3], fov: 40 }}
+        camera={{ position: [0, 2.2, 22], fov: 46 }}
         dpr={isCoarse ? [1, 1.2] : [1, 1.6]}
         gl={{ antialias: true, alpha: false, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.15 }}
         style={{ position: 'absolute', inset: 0 }}
       >
         <color attach="background" args={[isDark ? '#0A0B0E' : '#F5F3EE']} />
-        <fog attach="fog" args={[isDark ? '#0A0B0E' : '#F5F3EE', 7, 14]} />
-        <Suspense fallback={null}>
-          <RoomContents isDark={isDark} reduced={reduced} coarse={isCoarse} />
-        </Suspense>
+        <fog attach="fog" args={[isDark ? '#0A0B0E' : '#F5F3EE', 7, 26]} />
+        <WorkspaceLighting ember={palette.ember} arc={palette.arc} />
+        <ScrollControls pages={5} damping={reduced ? 0 : 0.2}>
+          <JourneyCamera pointer={pointer} reduced={reduced} coarse={isCoarse} />
+          <Suspense fallback={null}>
+            <RoomContents palette={palette} reduced={reduced} />
+            <ChapterMarkers ember={palette.ember} arc={palette.arc} reduced={reduced} />
+          </Suspense>
+          <Scroll html>
+            <ChapterCaptions ember={palette.ember} />
+          </Scroll>
+        </ScrollControls>
       </Canvas>
+      <div className="absolute bottom-5 right-5 pointer-events-none">
+        <AmbientAudio />
+      </div>
     </div>
   );
 }

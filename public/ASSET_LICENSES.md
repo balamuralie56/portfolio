@@ -1,5 +1,13 @@
 # 3D Asset License Record
 
+## Audio
+
+| Asset | Source | License | Attribution | Notes |
+|---|---|---|---|---|
+| "Viriboni, rendered on the Veena" | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Viriboni,_rendered_on_the_Veena.ogg) | **CC0 1.0** (confirmed via Wikimedia's own API, `extmetadata.LicenseShortName = "cc0"`) | Not required | Traditional Carnatic veena performance of the varnam "Viriboni" (Bhairavi ragam), performed by Smt. Pushpa Srivatsan. ~13.5 min, used as a looping ambient background track. The brief asked for traditional Tamil "humming" specifically — no clean CC0 male-vocal-humming Tamil track exists that this project's research could verify; this instrumental veena piece is the closest legally-safe, authentically traditional substitute found. Local path: `public/audio/veena-viriboni.ogg`. |
+
+## 3D Models
+
 All assets below were downloaded via Poly Haven's public files API
 (`api.polyhaven.com` / `dl.polyhaven.org`) — a documented, unauthenticated
 endpoint separate from the polyhaven.com website's UI, which is what made

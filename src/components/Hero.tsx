@@ -68,27 +68,16 @@ export default function Hero() {
     <header
       id="top"
       className="relative overflow-hidden border-b"
-      style={{ borderColor: 'var(--line)', minHeight: use3D ? '88vh' : undefined }}
+      style={{ borderColor: 'var(--line)', height: use3D ? '100dvh' : undefined }}
     >
       {use3D ? (
-        <>
-          <WorkspaceScene coarse={coarse} />
-          {/* Minimal overlay — the room is the primary visual, this is a label, not a panel */}
-          <div className="relative pointer-events-none px-6 py-6 flex flex-col h-full justify-between" style={{ minHeight: '88vh' }}>
-            <div
-              className="self-start font-mono text-[10.5px] tracking-[0.14em] uppercase px-3 py-2 rounded border pointer-events-auto"
-              style={{ borderColor: 'var(--line)', background: 'color-mix(in srgb, var(--surface) 78%, transparent)', color: 'var(--ink-dim)' }}
-            >
-              <span style={{ color: 'var(--ink)' }}>{personalInfo.name}</span> — {personalInfo.role}
-            </div>
-            <div
-              className="self-center font-mono text-[10px] tracking-[0.12em] uppercase px-3 py-1.5 rounded pointer-events-none"
-              style={{ background: 'color-mix(in srgb, var(--surface) 65%, transparent)', color: 'var(--ink-dim)' }}
-            >
-              Hover an object to explore
-            </div>
-          </div>
-        </>
+        // WorkspaceScene owns the whole experience now — the scroll-driven
+        // journey, its chapter captions, and the audio toggle all render
+        // inside it. This header just needs to be exactly one viewport
+        // tall: ScrollControls sizes its internal scroll region to 100% of
+        // this element, and that's what turns "scroll through the story"
+        // into "then hand off to normal page scroll" once exhausted.
+        <WorkspaceScene coarse={coarse} />
       ) : (
         <div className="py-20 md:py-28">
           <HeroFallback />
