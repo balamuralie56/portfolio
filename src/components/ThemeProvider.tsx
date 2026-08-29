@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useSyncExternalStore } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -11,14 +11,38 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'balamurali-theme';
+
+function subscribeNever() {
+  return () => {};
+}
+
+function getStoredTheme(): Theme {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  return saved === 'light' || saved === 'dark' ? saved : 'dark';
+}
+
+// Matches layout.tsx's hardcoded "dark" class on <html> — the server has no
+// way to know the visitor's saved preference, so this must agree with that
+// static default or hydration mismatches (exactly the bug this file used to
+// have, on the Sun/Moon icon specifically).
+function getServerTheme(): Theme {
+  return 'dark';
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('balamurali-theme') as Theme;
-      if (saved === 'light' || saved === 'dark') return saved;
-    }
-    return 'dark';
-  });
+  // useSyncExternalStore, not useState+useEffect: this is the one hook
+  // React actually guarantees resolves the server/client mismatch itself —
+  // it renders getServerTheme() through hydration, then the real
+  // localStorage-derived value in the next commit, with no warning and no
+  // "set state in an effect" lint violation (there's no effect at all).
+  const storedTheme = useSyncExternalStore(subscribeNever, getStoredTheme, getServerTheme);
+
+  // A session-local override so a click can change the active theme
+  // immediately without waiting on (or writing to) the external-store path
+  // above. null = "no override yet, use storedTheme".
+  const [override, setOverride] = useState<Theme | null>(null);
+  const theme = override ?? storedTheme;
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
@@ -26,11 +50,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    localStorage.setItem('balamurali-theme', nextTheme);
-    document.documentElement.classList.toggle('light', nextTheme === 'light');
-    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setOverride(next); // set state in the click handler — not an effect, so nothing to flag
+    localStorage.setItem(STORAGE_KEY, next);
   };
 
   return (
