@@ -6,7 +6,7 @@ import { personalInfo, education, hobbies, journeyPhotos } from '../utils/data';
 function PhotoFrame({ src, caption }: { src: string; caption: string }) {
   return (
     <div className="w-full sm:w-64 flex-shrink-0">
-      <div className="relative border rounded-sm overflow-hidden" style={{ borderColor: 'var(--line)' }}>
+      <div className="card-3d relative border rounded-sm overflow-hidden" style={{ borderColor: 'var(--line)' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} alt={caption} className="w-full h-auto block" style={{ filter: 'grayscale(1) contrast(1.12) brightness(0.94)' }} />
         <div
@@ -27,7 +27,7 @@ function PhotoFrame({ src, caption }: { src: string; caption: string }) {
 
 export default function About() {
   return (
-    <section id="about" className="py-20 border-b scroll-mt-16" style={{ borderColor: 'var(--line)' }}>
+    <section id="about" className="py-20 border-b scroll-mt-16 text-depth" style={{ borderColor: 'var(--line)' }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="font-mono text-[11px] tracking-[0.2em] uppercase mb-4 flex items-center gap-3" style={{ color: 'var(--ember)' }}>
           <span className="w-6 h-px" style={{ background: 'var(--ember)' }} />
@@ -35,7 +35,7 @@ export default function About() {
         </div>
         <h2 className="font-display font-bold text-2xl md:text-3xl mb-8" style={{ color: 'var(--ink)' }}>Origin Record</h2>
 
-        <p className="max-w-[70ch] text-[15px] mb-10" style={{ color: 'var(--ink-dim)' }}>
+        <p className="max-w-[70ch] text-[15px] mb-10" style={{ color: 'var(--ink)' }}>
           {personalInfo.summary}
         </p>
 
@@ -44,7 +44,7 @@ export default function About() {
             {education.map((edu) => (
               <div key={edu.degree} className="pl-4 border-l-2" style={{ borderColor: 'var(--line)' }}>
                 <div className="font-display font-bold text-sm mb-0.5" style={{ color: 'var(--ink)' }}>{edu.degree}</div>
-                <div className="text-[12.5px]" style={{ color: 'var(--ink-dim)' }}>{edu.institution} · {edu.duration}</div>
+                <div className="text-[12.5px]" style={{ color: 'var(--ink)' }}>{edu.institution} · {edu.duration}</div>
                 <div className="font-mono text-[10.5px] mt-0.5" style={{ color: 'var(--ember-2)' }}>{edu.score.toUpperCase()}</div>
               </div>
             ))}
@@ -55,7 +55,7 @@ export default function About() {
                 {hobbies.map((h) => (
                   <span
                     key={h.name}
-                    className="text-[11.5px] px-2.5 py-1.5 rounded border"
+                    className="chip-3d text-[11.5px] px-2.5 py-1.5 rounded border"
                     style={{ borderColor: 'var(--line)', color: h.category === 'hobby' ? 'var(--ink)' : 'var(--ink-dim)' }}
                   >
                     {h.name}

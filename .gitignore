@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .claude/scheduled_tasks.lock
+
+# Source material kept locally, not shipped: the raw reference clips the
+# hero loop was cut from (the encoded copy lives in public/video/), and
+# the dated original of the resume (served copy is public/resume.pdf).
+/*.mp4
+/BALAMURALI E resume *.pdf

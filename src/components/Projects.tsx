@@ -21,6 +21,46 @@ function CitySenseViz() {
   );
 }
 
+function ForgeAiViz() {
+  const nodes = [
+    { x: 46, y: 58 }, { x: 94, y: 30 }, { x: 94, y: 86 }, { x: 150, y: 44 }, { x: 150, y: 96 }, { x: 198, y: 70 },
+  ];
+  const edges: [number, number][] = [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 5], [1, 2]];
+  return (
+    <svg viewBox="0 0 240 140" className="w-full h-auto block">
+      <text x="18" y="20" fontFamily="Share Tech Mono, monospace" fontSize={8} fill="var(--ink-dim)">AGENT_GRAPH</text>
+      <g stroke="var(--line)" strokeWidth={1.1}>
+        {edges.map(([a, b], i) => (
+          <line key={i} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} />
+        ))}
+      </g>
+      {nodes.map((n, i) => (
+        <circle key={i} cx={n.x} cy={n.y} r={i === 5 ? 7 : 5} fill="none" stroke={i === 0 || i === 5 ? 'var(--ember)' : 'var(--arc)'} strokeWidth={1.4} />
+      ))}
+      <text x="150" y="118" fontFamily="Share Tech Mono, monospace" fontSize={8} fill="var(--ember-2)">300+ TESTS PASSING</text>
+    </svg>
+  );
+}
+
+function SvvEstatesViz() {
+  return (
+    <svg viewBox="0 0 240 140" className="w-full h-auto block">
+      <line x1="0" y1="110" x2="240" y2="110" stroke="var(--line)" strokeWidth={1} />
+      <polygon points="60,32 118,32 118,110 60,110" fill="none" stroke="var(--arc)" strokeWidth={1.3} />
+      <polygon points="60,32 89,14 118,32" fill="none" stroke="var(--arc)" strokeWidth={1.3} />
+      {[48, 66, 84].map((y) => (
+        <rect key={y} x={70} y={y} width={10} height={12} fill="none" stroke="var(--ink-dim)" strokeWidth={1} />
+      ))}
+      {[48, 66, 84].map((y) => (
+        <rect key={`r-${y}`} x={98} y={y} width={10} height={12} fill="none" stroke="var(--ink-dim)" strokeWidth={1} />
+      ))}
+      <rect x="140" y="56" width="70" height="54" fill="none" stroke="var(--ember)" strokeWidth={1.2} />
+      <text x="142" y="52" fontFamily="Share Tech Mono, monospace" fontSize={8} fill="var(--ember)">LISTING #04</text>
+      <text x="142" y="122" fontFamily="Share Tech Mono, monospace" fontSize={8} fill="var(--ink-dim)">DEPLOYED</text>
+    </svg>
+  );
+}
+
 function EomsViz() {
   const cells: { x: number; y: number; stroke: string; width?: number }[] = [
     { x: 18, y: 30, stroke: 'var(--arc)' }, { x: 52, y: 30, stroke: 'var(--arc)' },
@@ -62,14 +102,16 @@ function AlprViz() {
 }
 
 const VIZ: Record<string, () => React.ReactElement> = {
+  forgeai: ForgeAiViz,
+  "eoms-lite": EomsViz,
+  "svv-estates": SvvEstatesViz,
   citysense: CitySenseViz,
-  eoms: EomsViz,
   alpr: AlprViz,
 };
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-20 border-b scroll-mt-16" style={{ borderColor: 'var(--line)' }}>
+    <section id="projects" className="py-20 border-b scroll-mt-16 text-depth" style={{ borderColor: 'var(--line)' }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="font-mono text-[11px] tracking-[0.2em] uppercase mb-4 flex items-center gap-3" style={{ color: 'var(--ember)' }}>
           <span className="w-6 h-px" style={{ background: 'var(--ember)' }} />
@@ -81,7 +123,7 @@ export default function Projects() {
           {projects.map((p) => {
             const Viz = VIZ[p.id];
             return (
-              <div key={p.id} className="border p-1" style={{ borderColor: 'var(--line)', background: 'var(--surface)' }}>
+              <div key={p.id} className="card-3d border p-1" style={{ borderColor: 'var(--line)', background: 'var(--surface)' }}>
                 <div className="border" style={{ borderColor: 'var(--line)', background: 'var(--bg)' }}>
                   {Viz && <Viz />}
                 </div>
@@ -97,7 +139,13 @@ export default function Projects() {
                   </div>
                   <div className="font-mono text-[10px] tracking-wide uppercase flex items-center gap-1.5" style={{ color: 'var(--ink-dim)' }}>
                     <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--ink-dim)' }} />
-                    {p.statusLabel}
+                    {p.url ? (
+                      <a href={p.url} target="_blank" rel="noreferrer" className="hover:underline" style={{ color: 'var(--arc)' }}>
+                        {p.statusLabel} ↗
+                      </a>
+                    ) : (
+                      p.statusLabel
+                    )}
                   </div>
                 </div>
               </div>
@@ -109,7 +157,7 @@ export default function Projects() {
           <div className="font-mono text-[10.5px] tracking-[0.14em] uppercase mb-3" style={{ color: 'var(--ink-dim)' }}>In the Lab — Active R&amp;D</div>
           <div className="flex flex-wrap gap-2.5">
             {labItems.map((item) => (
-              <div key={item.name} className="border border-dashed px-3 py-2 text-[12px] rounded-sm" style={{ borderColor: 'var(--line)', color: 'var(--ink-dim)' }}>
+              <div key={item.name} className="chip-3d border border-dashed px-3 py-2 text-[12px] rounded-sm" style={{ borderColor: 'var(--line)', color: 'var(--ink-dim)' }}>
                 <b style={{ color: 'var(--ink)' }}>{item.name}</b> — {item.desc}
                 <span className="font-mono text-[9px] ml-1.5" style={{ color: 'var(--ember-2)' }}>{item.status}</span>
               </div>
@@ -118,7 +166,7 @@ export default function Projects() {
               href={publicRepo.url}
               target="_blank"
               rel="noreferrer"
-              className="border border-dashed px-3 py-2 text-[12px] rounded-sm no-underline"
+              className="chip-3d border border-dashed px-3 py-2 text-[12px] rounded-sm no-underline"
               style={{ borderColor: 'var(--line)', color: 'var(--ink-dim)' }}
             >
               <b style={{ color: 'var(--ink)' }}>{publicRepo.name}</b> — {publicRepo.desc}

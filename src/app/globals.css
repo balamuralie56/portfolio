@@ -3,6 +3,17 @@
 @import "tailwindcss";
 
 :root {
+  /* Content now sits directly on the video — nothing washes it out in
+     front — so legibility has to come from the type and the surfaces
+     themselves. The halo is light here (dark text lifted off a pale
+     backdrop) and dark in the dark theme, the same way subtitles are
+     outlined against unpredictable footage. */
+  --halo: 0 0 2px rgba(255, 255, 255, 1), 0 1px 3px rgba(255, 255, 255, 1),
+    0 0 10px rgba(255, 255, 255, 0.95), 0 0 24px rgba(255, 255, 255, 0.8);
+  --elev-1: 0 1px 2px rgba(31, 28, 24, 0.16), 0 6px 18px rgba(31, 28, 24, 0.18);
+  --elev-2: 0 2px 6px rgba(31, 28, 24, 0.2), 0 18px 38px rgba(31, 28, 24, 0.26);
+  --edge: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
   --bg: #F5F3EE;
   --surface: #FFFFFF;
   --surface-2: #EBE7DE;
@@ -16,6 +27,12 @@
 }
 
 html.dark {
+  --halo: 0 0 2px rgba(0, 0, 0, 1), 0 1px 3px rgba(0, 0, 0, 1),
+    0 0 12px rgba(0, 0, 0, 0.95), 0 0 26px rgba(0, 0, 0, 0.85);
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 18px rgba(0, 0, 0, 0.5);
+  --elev-2: 0 2px 6px rgba(0, 0, 0, 0.55), 0 18px 38px rgba(0, 0, 0, 0.6);
+  --edge: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
   --bg: #0A0B0E;
   --surface: #14161B;
   --surface-2: #1B1E25;
@@ -80,3 +97,70 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Persistent full-site video backdrop — fixed behind every section, never
+   intercepting input. z-index: 0 (not a negative value) is deliberate: a
+   negative z-index on a fixed element gets painted below the root
+   element's own background in the standard stacking order, which hid this
+   layer entirely. Instead this relies on DOM order: layout.tsx renders the
+   backdrop before the page content, and wraps that content in its own
+   `position: relative` div, so the content's stacking context — also
+   z-index 0 — comes later in tree order and paints on top. */
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.backdrop-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* text-shadow inherits, so putting this on a section haloes every piece
+   of loose text inside it in one go — and .card-3d switches it back off,
+   since text sitting on a solid card surface doesn't need it. */
+.text-depth {
+  text-shadow: var(--halo);
+}
+
+/* Raised surfaces: the drop shadow sets them off the moving footage, the
+   inset top edge catches "light" so they read as physical panels rather
+   than flat rectangles, and they lift slightly on hover. */
+.card-3d {
+  text-shadow: none;
+  box-shadow: var(--elev-1), var(--edge);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-3d:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--elev-2), var(--edge);
+}
+
+/* Small chips (hobbies, lab items, contact details) were outline-only,
+   which disappears over footage — they get a real surface and a lighter
+   version of the same elevation. */
+.chip-3d {
+  text-shadow: none;
+  background: var(--surface);
+  box-shadow: var(--elev-1), var(--edge);
+}
+
+/* The footage is dark, cinematic space — against the light theme's
+   near-white page it just read as muddy grey under a pale scrim.
+   Inverting (and rotating the hue back) turns it into a clean
+   white-background technical render instead, so light mode gets a
+   backdrop that belongs to it rather than a dimmed version of the dark
+   one. */
+html.light .backdrop-media {
+  filter: invert(1) hue-rotate(180deg) saturate(1.3) contrast(0.95);
+}
+
+/* Every section sits over the site-wide video, so this wash is what keeps
+   body text readable against moving footage. The blur does most of that
+   work — blurred video still reads as motion and colour without competing
+   with text — which is what lets the opacity stay low enough for the
+   backdrop to actually be visible rather than a faint ghost. */

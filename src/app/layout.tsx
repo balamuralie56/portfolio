@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "../components/ThemeProvider";
+import SiteBackdrop from "../components/SiteBackdrop";
 
 export const metadata: Metadata = {
   title: "Balamurali E | Jr. Full-Stack AI Developer",
-  description: "Portfolio of Balamurali E, Jr. Full-Stack AI Developer specializing in Machine Learning, Deep Learning, and Computer Vision, with a working 3D scene built in React Three Fiber.",
+  description: "Portfolio of Balamurali E, Jr. Full-Stack AI Developer specializing in Machine Learning, Deep Learning, and Computer Vision.",
   keywords: [
     "Balamurali E",
     "Jr. Full-Stack AI Developer",
@@ -12,8 +13,7 @@ export const metadata: Metadata = {
     "Machine Learning",
     "Deep Learning",
     "YOLOv11",
-    "Next.js Portfolio",
-    "React Three Fiber"
+    "Next.js Portfolio"
   ],
   authors: [{ name: "Balamurali E" }],
 };
@@ -31,7 +31,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         <ThemeProvider>
-          {children}
+          <SiteBackdrop />
+          <div className="relative">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>

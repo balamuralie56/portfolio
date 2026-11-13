@@ -20,8 +20,8 @@ export default function Home() {
       <Achievements />
       <Research />
       <Contact />
-      <footer className="py-10 text-center font-mono text-[10.5px]" style={{ color: 'var(--ink-dim)' }}>
-        Balamurali E — built with Next.js, Tailwind, and React Three Fiber
+      <footer className="py-10 text-center font-mono text-[10.5px] text-depth" style={{ color: 'var(--ink-dim)' }}>
+        Balamurali E — built with Next.js and Tailwind
       </footer>
     </main>
   );

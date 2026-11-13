@@ -10,6 +10,7 @@ export interface Project {
   description: string;
   tags: string[];
   statusLabel: string;
+  url?: string;
 }
 
 export interface LabItem {
@@ -111,20 +112,39 @@ export const experience = {
 
 export const projects: Project[] = [
   {
+    id: "forgeai",
+    title: "ForgeAI — Multi-Agent Orchestration System",
+    category: "AI Infrastructure",
+    description: "A mature multi-agent orchestration system: a FastAPI backend coordinating task graphs across agents, a React frontend for driving and observing runs, and inference against local LLMs via Ollama. 300+ passing tests.",
+    tags: ["FastAPI", "React", "Multi-Agent", "Ollama / Local LLMs", "300+ Tests"],
+    statusLabel: "Public · github.com/balamuralie56/ForgeAI",
+    url: "https://github.com/balamuralie56/ForgeAI",
+  },
+  {
+    id: "eoms-lite",
+    title: "EOMS Lite — Exam Invigilation & Room Allocation",
+    category: "SaaS Product",
+    description: "A finished, feature-complete QR-based exam invigilation and room-allocation SaaS product — faculty check-in by QR scan, seat-grid allocation, substitution handling, and materials tracking.",
+    tags: ["QR-Based Check-In", "FastAPI", "Room Allocation", "SaaS"],
+    statusLabel: "Public · github.com/balamuralie56/eoms-lite",
+    url: "https://github.com/balamuralie56/eoms-lite",
+  },
+  {
+    id: "svv-estates",
+    title: "SVV-Estates — Real Estate Platform",
+    category: "Web Platform",
+    description: "A live, deployed real estate platform built for a family real-estate business — listings, inquiries, and property management in one place.",
+    tags: ["Next.js", "Deployed", "Real Estate"],
+    statusLabel: "Public · github.com/balamuralie56/SVV-Estates",
+    url: "https://github.com/balamuralie56/SVV-Estates",
+  },
+  {
     id: "citysense",
     title: "CitySense — Smart City Monitoring",
     category: "Computer Vision",
-    description: "Prototyped and configured a YOLOv11-based infrastructure monitoring system for street-level element detection, with custom dataset annotation for precise training.",
+    description: "Prototyped and configured a YOLOv11-based infrastructure monitoring system for street-level element detection, with custom dataset annotation for precise training. Currently being rebuilt as V2.",
     tags: ["YOLO Detection", "Computer Vision", "Object Tracking", "Real-Time Inference"],
-    statusLabel: "Prototype build — not on GitHub, happy to walk through it live",
-  },
-  {
-    id: "eoms",
-    title: "EOMS — Exam Operations Management System",
-    category: "Operations Console",
-    description: "Admin console for exam operations — faculty check-in, substitution handling, materials tracking, seat-grid allocation, with full undo support.",
-    tags: ["FastAPI", "JWT Auth", "Rule-Based Assignment", "Seat Grid"],
-    statusLabel: "Code private — available on request",
+    statusLabel: "In progress — V2 rebuild, not on GitHub yet",
   },
   {
     id: "alpr",
@@ -137,11 +157,7 @@ export const projects: Project[] = [
 ];
 
 export const labItems: LabItem[] = [
-  { name: "ForgeAI", desc: "Own AI agent project — task DAG, LLM integration", status: "PRIVATE" },
-  { name: "BrightPath HRM", desc: "Multi-tenant HRMS, FastAPI + Next.js", status: "PRIVATE · ACTIVE" },
-  { name: "FDAIAOS", desc: "Academic OS (LMS + ERP), FastAPI + Next.js 16", status: "PRIVATE · ACTIVE" },
   { name: "Bacteria Classification", desc: "CNN, MobileNetV2, transfer learning", status: "ONGOING" },
-  { name: "SVV Estates", desc: "Web platform for a family real-estate business", status: "PRIVATE" },
 ];
 
 export const publicRepo = {
@@ -158,7 +174,7 @@ export const achievements: Achievement[] = [
 
 export const education: Education[] = [
   { degree: "M.Sc Information Technology", score: "Passed with 75%", institution: "University of Madras", duration: "2023 – 2025" },
-  { degree: "B.Sc Computer Science", score: "Passed with 82%", institution: "A.M. Jain College", duration: "2020 – 2023" },
+  { degree: "B.Sc Computer Science", score: "Distinction (75–79%, University of Madras CBCS grading)", institution: "A.M. Jain College (University of Madras)", duration: "2020 – 2023" },
 ];
 
 export const serviceLog: ServiceLogItem[] = [

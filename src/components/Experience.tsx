@@ -5,7 +5,7 @@ import { experience } from '../utils/data';
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-20 border-b scroll-mt-16" style={{ borderColor: 'var(--line)' }}>
+    <section id="experience" className="py-20 border-b scroll-mt-16 text-depth" style={{ borderColor: 'var(--line)' }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="font-mono text-[11px] tracking-[0.2em] uppercase mb-4 flex items-center gap-3" style={{ color: 'var(--ember)' }}>
           <span className="w-6 h-px" style={{ background: 'var(--ember)' }} />
@@ -13,7 +13,7 @@ export default function Experience() {
         </div>
         <h2 className="font-display font-bold text-2xl md:text-3xl mb-8" style={{ color: 'var(--ink)' }}>Deployment Record</h2>
 
-        <div className="border rounded-sm p-6 md:p-7" style={{ borderColor: 'var(--line)', background: 'var(--surface)' }}>
+        <div className="card-3d border rounded-sm p-6 md:p-7" style={{ borderColor: 'var(--line)', background: 'var(--surface)' }}>
           <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1">
             <div className="font-display font-bold text-base" style={{ color: 'var(--ink)' }}>{experience.role}</div>
             <div className="font-mono text-[11px]" style={{ color: 'var(--arc)' }}>{experience.duration.toUpperCase()}</div>
