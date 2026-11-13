@@ -3,6 +3,7 @@
 import React from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import Logo from './Logo';
 
 const links = [
   { href: '#about', label: 'About' },
@@ -22,10 +23,7 @@ export default function Nav() {
     <nav className="sticky top-0 z-50 backdrop-blur-md border-b" style={{ background: 'color-mix(in srgb, var(--bg) 88%, transparent)', borderColor: 'var(--line)' }}>
       <div className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-5">
         <a href="#top" className="flex items-center gap-2.5 font-display font-extrabold text-sm tracking-wide flex-shrink-0" style={{ color: 'var(--ink)' }}>
-          <svg viewBox="0 0 120 120" className="w-7 h-7" aria-hidden="true">
-            <polygon points="60,4 112,32 112,88 60,116 8,88 8,32" fill="none" stroke="var(--ember)" strokeWidth={4} />
-            <text x="60" y="72" textAnchor="middle" className="font-display" style={{ fontSize: 36, fill: 'var(--ink)', fontWeight: 800 }}>BE</text>
-          </svg>
+          <Logo className="w-7 h-7 flex-shrink-0" />
           BALAMURALI&nbsp;E
         </a>
 
