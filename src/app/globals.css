@@ -119,6 +119,20 @@ body {
   object-fit: cover;
 }
 
+/* The three clips are stacked on top of each other; only the current one
+   is opaque, so the handoff between them is a crossfade rather than a
+   cut to whatever the next file has buffered. */
+.backdrop-clip {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.backdrop-clip.is-active {
+  opacity: 1;
+}
+
 /* text-shadow inherits, so putting this on a section haloes every piece
    of loose text inside it in one go — and .card-3d switches it back off,
    since text sitting on a solid card surface doesn't need it. */
